@@ -8,30 +8,33 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.value.ValueChangeMode;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.spring.annotation.SpringComponent;
+import com.vaadindemo.vaadindemo.email.SimpleEmailSender;
 import com.vaadindemo.vaadindemo.entities.PersonData;
 import com.vaadindemo.vaadindemo.repositories.PersonRepository;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 @Route
 public class MainView extends VerticalLayout {
 
     private final PersonRepository repository;
+//    private final SimpleEmailSender emailSender;
+
     private final MainEditor editor;
     private final Grid<PersonData> grid;
     private final TextField filter;
     private final Button addNewBtn;
+    private final Button sendEmailBtn;
 
-    @Autowired
-    MainView(PersonRepository repository, MainEditor editor) {
+    MainView(PersonRepository repository, SimpleEmailSender emailSender, MainEditor editor) {
         this.repository = repository;
+//        this.emailSender = emailSender;
         this.editor = editor;
         this.addNewBtn = new Button("New customer", VaadinIcon.PLUS.create());
         this.grid = new Grid<>(PersonData.class);
         this.filter = new TextField();
+        this.sendEmailBtn = new Button("Send Email");
 
-        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn);
+        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, sendEmailBtn);
         add(actions, grid, editor);
 
         grid.setHeight("300px");
@@ -47,12 +50,15 @@ public class MainView extends VerticalLayout {
         });
 
         addNewBtn.addClickListener(e -> editor.editPersonData(new PersonData("", "")));
+        sendEmailBtn.addClickListener(e -> emailSender.SendSimpleEmail(repository.findAll()));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
             listPerson(filter.getValue());
         });
+
+
 
         // Initialize listing
         listPerson(null);
