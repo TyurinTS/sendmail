@@ -17,45 +17,41 @@ import org.apache.commons.lang3.StringUtils;
 public class MainView extends VerticalLayout {
 
     private final PersonRepository repository;
-//    private final SimpleEmailSender emailSender;
-
+    private final SimpleEmailSender emailSender;
     private final MainEditor editor;
-    private final Grid<PersonData> grid;
-    private final TextField filter;
-    private final Button addNewBtn;
-    private final Button sendEmailBtn;
+
+    private final Grid<PersonData> grid = new Grid<>(PersonData.class);
+    private final TextField filterTextField = new TextField();
+    private final Button newPersonButton = new Button("New customer", VaadinIcon.PLUS.create());
+    private final Button sendEmailButton = new Button("Send Email");;
 
     MainView(PersonRepository repository, SimpleEmailSender emailSender, MainEditor editor) {
         this.repository = repository;
-//        this.emailSender = emailSender;
+        this.emailSender = emailSender;
         this.editor = editor;
-        this.addNewBtn = new Button("New customer", VaadinIcon.PLUS.create());
-        this.grid = new Grid<>(PersonData.class);
-        this.filter = new TextField();
-        this.sendEmailBtn = new Button("Send Email");
 
-        HorizontalLayout actions = new HorizontalLayout(filter, addNewBtn, sendEmailBtn);
+        HorizontalLayout actions = new HorizontalLayout(filterTextField, newPersonButton, sendEmailButton);
         add(actions, grid, editor);
 
         grid.setHeight("300px");
         grid.setColumns("id", "eMail", "name");
         grid.getColumnByKey("id").setWidth("50px").setFlexGrow(0);
 
-        filter.setValueChangeMode(ValueChangeMode.EAGER);
-        filter.addValueChangeListener(e -> listPerson(e.getValue()));
+        filterTextField.setValueChangeMode(ValueChangeMode.EAGER);
+        filterTextField.addValueChangeListener(e -> listPerson(e.getValue()));
 
         // Connect selected Customer to editor or hide if none is selected
         grid.asSingleSelect().addValueChangeListener(e -> {
             editor.editPersonData(e.getValue());
         });
 
-        addNewBtn.addClickListener(e -> editor.editPersonData(new PersonData("", "")));
-        sendEmailBtn.addClickListener(e -> emailSender.SendSimpleEmail(repository.findAll()));
+        newPersonButton.addClickListener(e -> editor.editPersonData(new PersonData("", "")));
+        sendEmailButton.addClickListener(e -> emailSender.SendSimpleEmail(repository.findAll()));
 
         // Listen changes made by the editor, refresh data from backend
         editor.setChangeHandler(() -> {
             editor.setVisible(false);
-            listPerson(filter.getValue());
+            listPerson(filterTextField.getValue());
         });
 
 
