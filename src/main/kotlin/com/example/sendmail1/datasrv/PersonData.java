@@ -1,19 +1,20 @@
-package com.vaadindemo.vaadindemo.entities;
+package com.example.sendmail1.datasrv;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import java.io.Serializable;
 
 @Entity
-public class PersonData implements Serializable {
+public class PersonData {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
+    // Внимание: имена полей должны быть точно такие же, как в MainEditor. Нужно для связывания (binding)
     private String eMail;
     private String name;
+    private boolean isScuccess;
 
     protected PersonData() {}
 
@@ -44,5 +45,13 @@ public class PersonData implements Serializable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public boolean isScuccess() {
+        return isScuccess;
+    }
+
+    public void setScuccess(boolean scuccess) {
+        isScuccess = scuccess;
     }
 }

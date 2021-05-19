@@ -1,5 +1,7 @@
-package com.vaadindemo.vaadindemo.view;
+package com.example.sendmail1.views;
 
+import com.example.sendmail1.datasrv.PersonData;
+import com.example.sendmail1.datasrv.PersonDataRepository;
 import com.vaadin.flow.component.Key;
 import com.vaadin.flow.component.KeyNotifier;
 import com.vaadin.flow.component.button.Button;
@@ -10,41 +12,45 @@ import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.spring.annotation.SpringComponent;
 import com.vaadin.flow.spring.annotation.UIScope;
-import com.vaadindemo.vaadindemo.entities.PersonData;
-import com.vaadindemo.vaadindemo.repositories.PersonRepository;
 
-@SpringComponent
+import javax.annotation.PostConstruct;
+
 @UIScope
+@SpringComponent
 public class MainEditor extends VerticalLayout implements KeyNotifier {
-
-    private final PersonRepository repository;
+    private final PersonDataRepository repository;
     private PersonData personData;
 
+    // Внимание: имена компонентов должны быть точно такие же, как в Entity. Нужно для связывания
     TextField eMail = new TextField("EMail");
     TextField name = new TextField("Name");
 
-    Button save = new Button("Save", VaadinIcon.CHECK.create());
-    Button cancel = new Button("Cancel");
-    Button delete = new Button("Delete", VaadinIcon.TRASH.create());
-    HorizontalLayout actions = new HorizontalLayout(save, cancel, delete);
+    Button saveButton = new Button("Save", VaadinIcon.CHECK.create());
+    Button cancelButton = new Button("Cancel");
+    Button deleteButton = new Button("Delete", VaadinIcon.TRASH.create());
+    HorizontalLayout actionsLayout = new HorizontalLayout(saveButton, cancelButton, deleteButton);
 
     Binder<PersonData> binder = new Binder<>(PersonData.class);
     private ChangeHandler changeHandler;
 
-    MainEditor(PersonRepository repository) {
+    MainEditor(PersonDataRepository repository) {
         this.repository = repository;
-        add(eMail, name, actions);
+    }
+
+    @PostConstruct
+    public void initEditor() {
+        add(eMail, name, actionsLayout);
         binder.bindInstanceFields(this);
         setSpacing(true);
-        save.getElement().getThemeList().add("primary");
-        delete.getElement().getThemeList().add("error");
+        saveButton.getElement().getThemeList().add("primary");
+        deleteButton.getElement().getThemeList().add("error");
 
         addKeyPressListener(Key.ENTER, e -> save());
 
         // wire action buttons to save, delete and reset
-        save.addClickListener(e -> save());
-        delete.addClickListener(e -> delete());
-        cancel.addClickListener(e -> editPersonData(personData));
+        saveButton.addClickListener(e -> save());
+        deleteButton.addClickListener(e -> delete());
+        cancelButton.addClickListener(e -> editPersonData(personData));
         setVisible(false);
     }
 
@@ -75,7 +81,7 @@ public class MainEditor extends VerticalLayout implements KeyNotifier {
             personData = p;
         }
 
-        cancel.setVisible(persisted);
+        cancelButton.setVisible(persisted);
         binder.setBean(personData);
         setVisible(true);
         eMail.focus();
