@@ -20,7 +20,7 @@ public class EmailService {
         this.templateEngine = templateEngine;
     }
 
-    public void sendMail(AbstractEmailContext email) throws MessagingException {
+    public void sendMail(EmailContext email) throws MessagingException {
         MimeMessage message = emailSender.createMimeMessage();
         MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, MimeMessageHelper.MULTIPART_MODE_MIXED_RELATED, StandardCharsets.UTF_8.name());
         Context context = new Context();
