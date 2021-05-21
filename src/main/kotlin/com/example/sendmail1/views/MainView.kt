@@ -42,7 +42,7 @@ class MainView(
         grid.asSingleSelect().addValueChangeListener { l -> editor.editPersonData(l.value) }
 
         newPersonButton.addClickListener { l -> editor.editPersonData(PersonData("", "")) }
-        sendEmailButton.addClickListener { l -> sendEm }
+//        sendEmailButton.addClickListener { l -> sendEm  }
 
     }
 
