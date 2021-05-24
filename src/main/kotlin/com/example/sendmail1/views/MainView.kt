@@ -2,6 +2,7 @@ package com.example.sendmail1.views
 
 import com.example.sendmail1.datasrv.PersonData
 import com.example.sendmail1.datasrv.PersonDataRepository
+import com.example.sendmail1.emailsrv.EmailContext
 import com.example.sendmail1.emailsrv.EmailService
 import com.vaadin.flow.component.button.Button
 import com.vaadin.flow.component.grid.Grid
@@ -13,6 +14,8 @@ import com.vaadin.flow.data.value.ValueChangeMode
 import com.vaadin.flow.router.Route
 import org.thymeleaf.util.StringUtils
 import javax.annotation.PostConstruct
+import javax.mail.MessagingException
+
 
 @Route
 class MainView(
@@ -42,13 +45,40 @@ class MainView(
         grid.asSingleSelect().addValueChangeListener { l -> editor.editPersonData(l.value) }
 
         newPersonButton.addClickListener { l -> editor.editPersonData(PersonData("", "")) }
-//        sendEmailButton.addClickListener { l -> sendEm  }
+        sendEmailButton.addClickListener { l -> sendEmail(repository.findAll())  }
 
+//        editor.setChangeHandler { e ->
+//            e.isVisible
+//
+//
+//               = false
+//            listPerson(filterTextField.value)
+//        }
     }
 
     fun listPerson(filterText: String) {
         if (StringUtils.isEmpty(filterText)) {
             grid.setItems(repository.findAll())
         }
+    }
+
+    fun sendEmail(p: List<PersonData>) {
+        val emailContext = EmailContext();
+        emailContext.from = "tim.tyurin@gmail.com"
+        emailContext.subject = "Vacancy"
+
+        p.parallelStream().forEach { l ->
+            emailContext.to = l.geteMail()
+            val context: MutableMap<String, Any> = HashMap()
+            context["name"] = l.name
+            emailContext.context = context
+            emailContext.templateLocation = "message-template"
+            try {
+                emailService.sendMail(emailContext)
+            } catch (e: MessagingException) {
+                e.printStackTrace()
+            }
+        }
+
     }
 }
