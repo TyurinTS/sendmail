@@ -9,11 +9,12 @@ import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.thymeleaf.spring5.SpringTemplateEngine;
 import org.thymeleaf.templateresolver.ITemplateResolver;
 
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
 public class EmailConfig {
-    private Environment env;
+    private final Environment env;
 
     public EmailConfig(Environment env) {
         this.env = env;
@@ -23,7 +24,7 @@ public class EmailConfig {
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
         mailSender.setHost(env.getProperty("spring.mail.host"));
-        mailSender.setPort(Integer.parseInt(env.getProperty("spring.mail.port")));
+        mailSender.setPort(Integer.parseInt(Objects.requireNonNull(env.getProperty("spring.mail.port"))));
         mailSender.setUsername(env.getProperty("spring.mail.username"));
         mailSender.setPassword(env.getProperty("spring.mail.password"));
 

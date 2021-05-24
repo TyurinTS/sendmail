@@ -25,9 +25,9 @@ import java.util.Map;
 
 @Route
 public class MainView extends VerticalLayout {
-    private PersonDataRepository repository;
-    private EmailService emailService;
-    private MainEditor editor;
+    private final PersonDataRepository repository;
+    private final EmailService emailService;
+    private final MainEditor editor;
 
     private final Grid<PersonData> grid = new Grid<>(PersonData.class);
     private final TextField filterTextField = new TextField();
@@ -53,9 +53,7 @@ public class MainView extends VerticalLayout {
         filterTextField.addValueChangeListener(e -> listPerson(e.getValue()));
 
 //         Connect selected Customer to editor or hide if none is selected
-        grid.asSingleSelect().addValueChangeListener(e -> {
-            editor.editPersonData(e.getValue());
-        });
+        grid.asSingleSelect().addValueChangeListener(e -> editor.editPersonData(e.getValue()));
 
         newPersonButton.addClickListener(e -> editor.editPersonData(new PersonData("", "")));
         sendEmailButton.addClickListener(e -> sendEmail(repository.findAll()));
