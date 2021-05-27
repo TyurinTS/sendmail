@@ -17,6 +17,8 @@
 		<java.version>16</java.version>
 		<kotlin.version>1.5.0</kotlin.version>
 		<vaadin.version>19.0.6</vaadin.version>
+		<flow.version>6.0.9</flow.version>
+		<start-class>com.example.sendmail1.Sendmail1Application</start-class>
 	</properties>
 
 	<dependencyManagement>
@@ -85,61 +87,176 @@
 			<artifactId>vaadin-spring-boot-starter</artifactId>
 			<version>${vaadin.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>com.vaadin</groupId>
 			<artifactId>vaadin-crud-flow</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.module</groupId>
+			<artifactId>jackson-module-kotlin</artifactId>
+		</dependency>
 	</dependencies>
 
-	<build>
-		<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>
-		<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>
-		<plugins>
-			<plugin>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-maven-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.jetbrains.kotlin</groupId>
-				<artifactId>kotlin-maven-plugin</artifactId>
-				<configuration>
-					<args>
-						<arg>-Xjsr305=strict</arg>
-					</args>
-					<compilerPlugins>
-						<plugin>spring</plugin>
-						<plugin>jpa</plugin>
-					</compilerPlugins>
-				</configuration>
-				<dependencies>
-					<dependency>
+	<profiles>
+		<profile>
+			<id>production</id>
+			<properties>
+				<vaadin.productionMode>true</vaadin.productionMode>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.vaadin</groupId>
+					<artifactId>flow-server-production-mode</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+<!--				<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
+<!--				<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
+
+				<plugins>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>flow-maven-plugin</artifactId>
+						<version>${flow.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>build-frontend</goal>
+								</goals>
+								<phase>compile</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<pnpmEnable>true</pnpmEnable>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
 						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-allopen</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-					<dependency>
+						<artifactId>kotlin-maven-plugin</artifactId>
+						<configuration>
+							<args>
+								<arg>-Xjsr305=strict</arg>
+							</args>
+							<compilerPlugins>
+								<plugin>spring</plugin>
+								<plugin>jpa</plugin>
+							</compilerPlugins>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.jetbrains.kotlin</groupId>
+								<artifactId>kotlin-maven-allopen</artifactId>
+								<version>${kotlin.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>org.jetbrains.kotlin</groupId>
+								<artifactId>kotlin-maven-noarg</artifactId>
+								<version>${kotlin.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>vaadin-maven-plugin</artifactId>
+						<version>${vaadin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-frontend</goal>
+									<goal>build-frontend</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>develop</id>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<vaadin.productionMode>false</vaadin.productionMode>
+			</properties>
+			<dependencies>
+				<dependency>
+					<groupId>com.vaadin</groupId>
+					<artifactId>flow-server-production-mode</artifactId>
+				</dependency>
+			</dependencies>
+			<build>
+<!--				<sourceDirectory>${project.basedir}/src/main/kotlin</sourceDirectory>-->
+<!--				<testSourceDirectory>${project.basedir}/src/test/kotlin</testSourceDirectory>-->
+
+				<plugins>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>flow-maven-plugin</artifactId>
+						<version>${flow.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>build-frontend</goal>
+								</goals>
+								<phase>compile</phase>
+							</execution>
+						</executions>
+						<configuration>
+							<pnpmEnable>true</pnpmEnable>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+					</plugin>
+					<plugin>
 						<groupId>org.jetbrains.kotlin</groupId>
-						<artifactId>kotlin-maven-noarg</artifactId>
-						<version>${kotlin.version}</version>
-					</dependency>
-				</dependencies>
-			</plugin>
-			<plugin>
-				<groupId>com.vaadin</groupId>
-				<artifactId>vaadin-maven-plugin</artifactId>
-				<version>${vaadin.version}</version>
-				<executions>
-					<execution>
-						<goals>
-							<goal>prepare-frontend</goal>
-							<goal>build-frontend</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+						<artifactId>kotlin-maven-plugin</artifactId>
+						<configuration>
+							<args>
+								<arg>-Xjsr305=strict</arg>
+							</args>
+							<compilerPlugins>
+								<plugin>spring</plugin>
+								<plugin>jpa</plugin>
+							</compilerPlugins>
+						</configuration>
+						<dependencies>
+							<dependency>
+								<groupId>org.jetbrains.kotlin</groupId>
+								<artifactId>kotlin-maven-allopen</artifactId>
+								<version>${kotlin.version}</version>
+							</dependency>
+							<dependency>
+								<groupId>org.jetbrains.kotlin</groupId>
+								<artifactId>kotlin-maven-noarg</artifactId>
+								<version>${kotlin.version}</version>
+							</dependency>
+						</dependencies>
+					</plugin>
+					<plugin>
+						<groupId>com.vaadin</groupId>
+						<artifactId>vaadin-maven-plugin</artifactId>
+						<version>${vaadin.version}</version>
+						<executions>
+							<execution>
+								<goals>
+									<goal>prepare-frontend</goal>
+									<goal>build-frontend</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+
 	<repositories>
 		<repository>
 			<id>spring-milestones</id>
