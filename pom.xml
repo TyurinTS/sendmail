@@ -16,7 +16,7 @@
 	<properties>
 		<java.version>16</java.version>
 		<kotlin.version>1.5.0</kotlin.version>
-		<vaadin.version>19.0.6</vaadin.version>
+		<vaadin.version>20.0.1</vaadin.version>
 		<flow.version>6.0.9</flow.version>
 		<start-class>com.example.sendmail1.Sendmail1Application</start-class>
 	</properties>
