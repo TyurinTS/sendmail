@@ -19,6 +19,9 @@
 		<vaadin.version>20.0.1</vaadin.version>
 		<flow.version>6.0.9</flow.version>
 		<start-class>com.example.sendmail1.Sendmail1Application</start-class>
+		<sonar.projectKey>TyurinTS_sendmail</sonar.projectKey>
+  		<sonar.organization>tyurints</sonar.organization>
+		<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 	</properties>
 
 	<dependencyManagement>
